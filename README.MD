@@ -3,6 +3,8 @@
 SaaS приложение для проекта HorizonOfCubes. 
 Идея проекта создать сайт с интеграцией сервером minecraft.
 
+DEMO: https://hc.st29.ru/
+
 Что планируется сделать:
 1. Личный кабинет пользователя через авторизацию Discord [✗]
 2. Заявочеую систему на проходки, а также интеграцию с ботом на заявки [discordTicketBot](https://github.com/stepanovme/discordTicketBot) [✗]

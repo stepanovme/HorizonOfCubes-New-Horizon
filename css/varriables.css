@@ -1,0 +1,16 @@
+:root {
+    --main-color: #FF48F5;
+    --main-color-active: #D71ACC;
+    --main-background: #15151B;
+    --main-color-button: linear-gradient(180deg, #FF48F5 0%, #C634BE 100%);
+    --main-color-button-hover: 0 4px 12px 0 rgba(225,0,255,0.3);
+    --main-color-button-active: 0 4px 12px 0 rgba(196, 1, 222, 0.3);
+    --header-bottom: #1F1F25;
+    --card-background: #1B1B22;
+    --card-background-hover: #26262F;
+    --text-secondary: #D6D5D5;
+    --btn-secendory: #313138;
+    --btn-secendory-hover: #3C3C44;
+    --join-description: #bdbdc7;
+    --footer-icon: #888a92;
+}
