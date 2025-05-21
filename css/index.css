@@ -67,6 +67,7 @@
     box-shadow: var(--main-color-button-active);
 }
 
+/* Шапка */
 header {
     position: fixed;
     display: flex;
@@ -190,6 +191,8 @@ header>.container>.header-button>button.auth-btn:hover{
 header>.container>.header-button>button.auth-btn:active{
     box-shadow: var(--main-color-button-active);
 }
+
+/* Волна */
 
 .promo-section .wave {
     position: absolute;
@@ -688,7 +691,7 @@ header>.container>.header-button>button.auth-btn:active{
     }
 }
 
-/* Секция 6 */
+/* Футер */
 .footer {
     width: 100%;
     background: #19191f;
@@ -758,6 +761,84 @@ header>.container>.header-button>button.auth-btn:active{
     }
     .footer-icon {
         font-size: 24px;
+    }
+}
+
+/* Меню */
+
+.avatar-menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.avatar-menu {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    min-width: 220px;
+    background: #23232a;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.16);
+    padding: 16px 14px 10px 14px;
+    z-index: 100;
+    display: none;
+}
+.avatar-menu-header {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.1;
+}
+.avatar-menu-buy {
+    color: var(--main-color);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.avatar-menu-buy:hover {
+    color: var(--main-color-hover);
+}
+
+.avatar-menu-buy:active {
+    color: var(--main-color-active);
+}
+
+.avatar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #23232a;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.18s;
+}
+.avatar-menu-item i {
+    font-size: 18px;
+}
+.avatar-menu-item.active,
+.avatar-menu-item:hover {
+    background: #292933;
+}
+@media (max-width: 600px) {
+    .avatar-menu {
+        min-width: 140px;
+        padding: 10px 4px 6px 4px;
+    }
+    .avatar-menu-header {
+        font-size: 15px;
+    }
+    .avatar-menu-item {
+        font-size: 13px;
+        padding: 7px 7px;
+    }
+    .avatar-menu-item i {
+        font-size: 15px;
     }
 }
 

@@ -1,3 +1,79 @@
+<?php
+session_start();
+
+$avatar_img_url = null;
+$avatar_url = null;
+$name = null;
+
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+    extract($_SESSION['userData']);
+
+    require_once __DIR__.'/database/config_discordsrv.php';
+    $discord_conn = $conn;
+    require_once __DIR__.'/database/config_skinrestorer.php';
+    $skin_conn = $conn;
+    require_once __DIR__.'/database/config_luckyperms.php';
+    $lp_conn = $conn;
+
+    $uuid = null;
+    $skinId = null;
+    $skinValue = null;
+    $skinUrl = null;
+    $texture_id = null;
+
+    $stmt = $discord_conn->prepare("SELECT uuid FROM discordsrv_accounts WHERE discord = ?");
+    $stmt->bind_param("s", $discord_id);
+    $stmt->execute();
+    $stmt->bind_result($uuid);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($uuid) {
+        $stmt = $skin_conn->prepare("SELECT skin_identifier FROM sr_players WHERE uuid = ?");
+        $stmt->bind_param("s", $uuid);
+        $stmt->execute();
+        $stmt->bind_result($skinId);
+        $stmt->fetch();
+        $stmt->close();
+    }
+
+    $stmt = $lp_conn->prepare("SELECT username FROM luckperms_players WHERE uuid = ?");
+    $stmt->bind_param("s", $uuid);
+    $stmt->execute();
+    $stmt->bind_result($nickname);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($skinId) {
+        $stmt = $skin_conn->prepare("SELECT value FROM sr_player_skins WHERE uuid = ?");
+        $stmt->bind_param("s", $skinId);
+        $stmt->execute();
+        $stmt->bind_result($skinValue);
+        $stmt->fetch();
+        $stmt->close();
+    }
+
+    if ($skinValue) {
+        $decoded_data = base64_decode($skinValue);
+        $json_data = json_decode($decoded_data, true);
+        $skinUrl = $json_data['textures']['SKIN']['url'] ?? null;
+    } else {
+        $skinUrl = $skinId;
+    }
+
+    if ($skinUrl) {
+        $parts = explode('/', $skinUrl);
+        $texture_id = end($parts);
+        $avatar_img_url = "https://mc-heads.net/avatar/$texture_id/48";
+    } else{
+        $avatar_img_url = "https://mc-heads.net/avatar/$nickname/48";
+    }
+
+    $avatar_url = "https://cdn.discordapp.com/avatars/$discord_id/$avatar.jpg";
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,6 +85,47 @@
     <link href="https://cdn.jsdelivr.net/gh/oathanrex/font-awesome-pro@main/fontawesome-pro-6.5.2-web/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <?php if($_SESSION['logged_in']){ ?>
+        <header>
+        <div class="container">
+            <div class="left">
+                <div class="header-logo">
+                    <img src="assets/images/logo/big_logo.png" alt="HC Logo">
+                </div>
+                <div class="header-menu">
+                    <a href="#" class="active">Главная</a>
+                    <a href="#">О проекте</a>
+                    <a href="#">Правила</a>
+                    <a href="#">Вики</a>
+                    <a href="#">Новости</a>
+                    <a href="#">Магазин</a>
+                    <a href="#">Прочее</a>
+                </div>
+            </div>
+            <div class="header-button">
+                <button class="mode-btn"><i class="fa-solid fa-moon"></i></button>
+                <a href="https://discord.com/invite/AHKee2wd2b"><i class="fa-brands fa-discord"></i></a>
+                <div class="avatar-menu-wrapper">
+                    <div class="avatar" id="avatar-btn">
+                        <img src="<?= htmlspecialchars($avatar_img_url ?: $avatar_url) ?>" alt="Avatar">
+                    </div>
+                    <div class="avatar-menu" id="avatar-menu" style="display:none;">
+                        <div class="avatar-menu-header">
+                            <?= htmlspecialchars($nickname) ?><br>
+                            <span class="avatar-menu-buy">Купить проходку <i class="fa-duotone fa-ticket"></i></span>
+                        </div>
+                        <a href="/profile/me" class="avatar-menu-item"><i class="fa-duotone fa-user"></i> Личный кабинет</a>
+                        <a href="/ticket/me" class="avatar-menu-item"><i class="fa-duotone fa-pen"></i> Подать заявку</a>
+                        <a href="/auth/logout" class="avatar-menu-item"><i class="fa-duotone fa-arrow-right-from-bracket"></i> Выйти из аккаунта</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <?php } ?>
+
+    <?php
+    if(!$_SESSION['logged_in']){ ?>
     <header>
         <div class="container">
             <div class="left">
@@ -28,17 +145,18 @@
             <div class="header-button">
                 <button class="mode-btn"><i class="fa-solid fa-moon"></i></button>
                 <a href="https://discord.com/invite/AHKee2wd2b"><i class="fa-brands fa-discord"></i></a>
-                <button class="auth-btn">Авторизация</button>
+                <button class="auth-btn" onclick="window.location.href='auth/init-oauth'">Авторизация</button>
             </div>
         </div>
     </header>
+    <?php } ?>
     <section class="promo-section">
         <video class="promo-bg-video" src="assets/video/promo.mp4" autoplay muted loop playsinline></video>
         <div class="promo-content">
             <img src="assets/images/logo/big_logo.png" alt="HC Logo" class="promo-logo">
             <h1>Проект «HorizonOfCubes»</h1>
             <p>Станьте героем незабываемого приключения и наслаждайтесь атмосферой</p>
-            <a href="#" class="promo-btn">НАЧАТЬ ИГРАТЬ</a>
+            <a href="auth/init-oauth" class="promo-btn">НАЧАТЬ ИГРАТЬ</a>
         </div>
 
         <div class="wave wave1"></div>
@@ -214,4 +332,5 @@
         </div>
     </footer>
 </body>
+<script src="js/script.js"></script>
 </html>
